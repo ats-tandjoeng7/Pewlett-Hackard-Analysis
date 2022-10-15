@@ -89,16 +89,6 @@ ORDER BY count DESC;
 -- Check the table
 SELECT * FROM mentoring_titles;
 
-SELECT COUNT(ut.emp_no),
-	ut.title,
-	COUNT(me.emp_no),
-	me.title
-FROM unique_titles ut
-FULL JOIN mentorship_eligibility me
-	ON ut.title = me.title
--- WHERE ut.title IS NULL OR me.title IS NULL
-GROUP BY ut.title, me.title;
-
 -- Change identical column names before joining
 ALTER TABLE mentoring_titles
 RENAME COLUMN count TO mentee_count;
