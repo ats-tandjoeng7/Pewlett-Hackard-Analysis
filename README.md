@@ -88,9 +88,9 @@ SELECT DISTINCT ON (e.emp_no) e.emp_no,
 	tt.title
 INTO mentorship_eligibility
 FROM employees AS e
-	INNER JOIN dept_employee as de
+	INNER JOIN dept_employee AS de
 		ON e.emp_no = de.emp_no
-	INNER JOIN titles as tt
+	INNER JOIN titles AS tt
 		ON e.emp_no = tt.emp_no
 WHERE (de.to_date = '9999-01-01')
 	AND (e.birth_date BETWEEN '1965-01-01' AND '1965-12-31')
@@ -103,8 +103,40 @@ SELECT * FROM mentorship_eligibility;
 ![Table 4](./Data/mentorship_eligibilty.png)
 
 ## Summary
-All deliverables have been completed and summarized without problems, though the huge gaps between numbers of retirement-ready employees and mentorship-eligible employees looked grim. I think two additional SQL queries and tables that could better forecast the impact of the upcoming "silver tsunami" were outlined in **Table 5** and **Table 6**. The aggregate number of employees who were eligible for the mentorship program sorted by title was condensed into **Table 5** and [mentoring_titles.csv](./Data/mentoring_titles.csv). We could reveal more insight and better answer the following high-level questions after joining **Table 3** and **Table 5** by using `ALTER TABLE`, `RENAME COLUMN`, `CREATE TABLE`, and `FULL JOIN` clauses. The analysis results were summarized in **Table 6** and [workforce_gaps.csv](./Data/workforce_gaps.csv).
+All deliverables have been completed and summarized without problems, though the huge gaps between numbers of retirement-ready employees and mentorship-eligible employees looked grim. I think two additional SQL queries and tables that could better forecast the impact of the upcoming "silver tsunami" were outlined in the following SQL snippets and **Table 5-6**.
 
+```
+-- Total number of mentorship-eligible titles in descending order
+SELECT COUNT(emp_no),
+	title
+INTO mentoring_titles
+FROM mentorship_eligibility
+GROUP BY title
+ORDER BY count DESC;
+
+-- Change identical column names before joining
+ALTER TABLE mentoring_titles
+RENAME COLUMN count TO mentee_count;
+ALTER TABLE mentoring_titles
+RENAME COLUMN title TO mentee_title;
+-- Create mentor-mentee difference by title table
+CREATE TABLE mentor_mentee_diff AS
+	SELECT * FROM retiring_titles rt
+	FULL JOIN mentoring_titles mt ON rt.title=mt.mentee_title;
+
+-- Aggregate the joined table
+SELECT count,
+	title,
+	mentee_count,
+	mentee_title,
+	(count-mentee_count) AS workforce_gap
+INTO workforce_gaps
+FROM mentor_mentee_diff;
+-- Check the table
+SELECT * FROM workforce_gaps;
+```
+
+The aggregate number of employees who were eligible for the mentorship program sorted by title was condensed into **Table 5** and [mentoring_titles.csv](./Data/mentoring_titles.csv). We could reveal more insight and better answer the high-level questions after joining **Table 3** and **Table 5** by using `ALTER TABLE`, `RENAME COLUMN`, `CREATE TABLE`, and `FULL JOIN` clauses. The overall analysis results were summarized in **Table 6** and [workforce_gaps.csv](./Data/workforce_gaps.csv). The `workforce_gap` column in **Table 6** provided the delta between numbers of the retiring employees and the mentorship-eligible employees.
 - How many roles will need to be filled as the "silver tsunami" begins to make an impact?
   - As soon as the "silver tsunami" generations retire, the company might need to backfill as many as **72458** roles gradually assuming that the "silver tsunami" generations are to retire in the same year. Over 70% of the roles were Senior Engineer or Senior Staff levels, which might be hardly filled because of their expertise and specialized skills.
 - Are there enough qualified, retirement-ready employees in the departments to mentor the next generation of Pewlett Hackard employees?
