@@ -18,7 +18,7 @@ Module 7 assignment fostered further understanding of database models, relationa
 ### Resources
 - Input file: Resources.zip
 - SQL script: Employee_Database_challenge.sql, schema_queries.sql
-- Output file: retirement_titles.csv, unique_titles.csv, retiring_titles.csv, mentorship_eligibilty.csv
+- Output file: retirement_titles.csv, unique_titles.csv, retiring_titles.csv, mentorship_eligibilty.csv, mentoring_titles.csv, workforce_gaps.csv
 - Image file: png files
 - Software: [PostgreSQL](https://www.postgresql.org/docs/), [Quick DBD - free DBD canvas](https://app.quickdatabasediagrams.com/#/)
 
