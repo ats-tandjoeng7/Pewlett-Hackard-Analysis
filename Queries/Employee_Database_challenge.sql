@@ -44,10 +44,10 @@ SELECT e.emp_no,
 	de.from_date,
 	de.to_date,
 	tt.title
-FROM employees e
-	INNER JOIN dept_employee de
+FROM employees AS e
+	INNER JOIN dept_employee AS de
 		ON e.emp_no = de.emp_no
-	INNER JOIN titles tt
+	INNER JOIN titles AS tt
 		ON e.emp_no = tt.emp_no
 WHERE (e.emp_no = '10095'
 	OR e.emp_no = '10122'
@@ -97,8 +97,8 @@ RENAME COLUMN title TO mentee_title;
 -- Create mentor-mentee difference by title table
 DROP TABLE IF EXISTS mentor_mentee_diff CASCADE;
 CREATE TABLE mentor_mentee_diff AS
-	SELECT * FROM retiring_titles rt
-	FULL JOIN mentoring_titles mt ON rt.title=mt.mentee_title;
+	SELECT * FROM retiring_titles AS rt
+	FULL JOIN mentoring_titles AS mt ON rt.title=mt.mentee_title;
 
 -- Aggregate the joined table
 DROP TABLE IF EXISTS workforce_gaps CASCADE;
@@ -120,8 +120,8 @@ SELECT DISTINCT ON (ut.emp_no) ut.emp_no,
 	ut.title,
 	di.dept_name
 INTO unique_titles_dept
-FROM unique_titles ut
-	INNER JOIN dept_info di
+FROM unique_titles AS ut
+	INNER JOIN dept_info AS di
 		ON ut.emp_no = di.emp_no
 ORDER BY ut.emp_no ASC;
 -- Check the table
